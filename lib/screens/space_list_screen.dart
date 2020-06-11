@@ -19,20 +19,30 @@ class SpaceListScreen extends StatelessWidget {
           )
         ],
       ),
-      body: Consumer<MapSpace>(
-        child: Center(
-          child: const Text("No spaces added yet! Try adding some."),
-        ),
-        builder: (ctx, mapSpace, ch) => mapSpace.items.length <= 0
-            ? ch
-            : ListView.builder(
-                itemBuilder: (ctx, index) => ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: FileImage(mapSpace.items[index].image),
-                  ),
-                  title: Text(mapSpace.items[index].title),
+      body: FutureBuilder(
+        future:
+            Provider.of<MapSpace>(context, listen: false).fetchAndSetSpaces(),
+        builder: (ctx, snapshot) => snapshot.connectionState ==
+                ConnectionState.waiting
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Consumer<MapSpace>(
+                child: Center(
+                  child: const Text("No spaces added yet! Try adding some."),
                 ),
-                itemCount: mapSpace.items.length,
+                builder: (ctx, mapSpace, ch) => mapSpace.items.length <= 0
+                    ? ch
+                    : ListView.builder(
+                        itemBuilder: (ctx, index) => ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage:
+                                FileImage(mapSpace.items[index].image),
+                          ),
+                          title: Text(mapSpace.items[index].title),
+                        ),
+                        itemCount: mapSpace.items.length,
+                      ),
               ),
       ),
     );
