@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
+import 'package:mapspace/helper/location_helper.dart';
+import 'package:mapspace/screens/map_screen.dart';
 
 class SpaceInput extends StatefulWidget {
   @override
@@ -11,8 +13,21 @@ class _SpaceInputState extends State<SpaceInput> {
 
   Future<void> _getUserLocation() async {
     final locData = await Location().getLocation();
+    final staticMapImageUrl = LocationHelper.getLocationPreviewImg(
+        latitude: locData.latitude, longitude: locData.longitude);
+    setState(() {
+      _previewImageUrl = staticMapImageUrl;
+    });
     print(locData.latitude);
     print(locData.longitude);
+  }
+
+  Future<void> _selectOnMap() async {
+    Navigator.of(context).push(MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (ctx) => MapScreen(
+              isSelecting: true,
+            )));
   }
 
   @override
@@ -46,7 +61,7 @@ class _SpaceInputState extends State<SpaceInput> {
               textColor: Theme.of(context).primaryColor,
             ),
             FlatButton.icon(
-              onPressed: () {},
+              onPressed: _selectOnMap,
               icon: Icon(Icons.map),
               label: Text("Select on Map"),
               textColor: Theme.of(context).primaryColor,
