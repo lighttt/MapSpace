@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mapspace/model/space.dart';
 import 'package:mapspace/providers/map_spaces.dart';
 import 'package:mapspace/widgets/image_input.dart';
 import 'package:mapspace/widgets/space_input.dart';
@@ -16,6 +17,7 @@ class AddSpaceScreen extends StatefulWidget {
 class _AddSpaceScreenState extends State<AddSpaceScreen> {
   File _pickedImage;
   TextEditingController _titleController = TextEditingController();
+  SpaceLocation _pickedLocation;
 
   //saving a sapce
   void _saveSpace() {
@@ -23,12 +25,18 @@ class _AddSpaceScreenState extends State<AddSpaceScreen> {
       return;
     }
     Provider.of<MapSpace>(context, listen: false)
-        .addSpace(_titleController.text, _pickedImage);
+        .addSpace(_titleController.text, _pickedImage, _pickedLocation);
     Navigator.of(context).pop();
   }
 
+  // image select
   void _selectedImage(File pickedImage) {
     _pickedImage = pickedImage;
+  }
+
+  // location select  on map
+  void _selectSpace(double lat, double lng) {
+    _pickedLocation = SpaceLocation(latitude: lat, longitude: lng);
   }
 
   @override
@@ -58,7 +66,7 @@ class _AddSpaceScreenState extends State<AddSpaceScreen> {
                   SizedBox(
                     height: 10,
                   ),
-                  SpaceInput(),
+                  SpaceInput(_selectSpace),
                 ],
               ),
             ),

@@ -30,6 +30,17 @@ class _MapScreenState extends State<MapScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Your Space"),
+        actions: <Widget>[
+          if (widget.isSelecting)
+            IconButton(
+              icon: Icon(Icons.check),
+              onPressed: _pickedLocation == null
+                  ? null
+                  : () {
+                      Navigator.of(context).pop(_pickedLocation);
+                    },
+            )
+        ],
       ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
@@ -37,12 +48,14 @@ class _MapScreenState extends State<MapScreen> {
                 widget.initialLocation.longitude),
             zoom: 16),
         onTap: widget.isSelecting ? _selectSpace : null,
-        markers: _pickedLocation == null
+        markers: (_pickedLocation == null && widget.isSelecting)
             ? null
             : {
                 Marker(
                   markerId: MarkerId("m1"),
-                  position: _pickedLocation,
+                  position: _pickedLocation ??
+                      LatLng(widget.initialLocation.latitude,
+                          widget.initialLocation.longitude),
                 )
               },
       ),
